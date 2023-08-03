@@ -42,9 +42,23 @@ resource "aws_security_group" "jenkins-sg-2022" {
   }
 }
 
+resource "tls_private_key" "my_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "aws_key_pair" "deployer" {
+  key_name   = "deployer-key"
+  public_key = tls_private_key.my_key.public_key_openssh
+
+  provisioner "local-exec" {
+    command = "echo '${tls_private_key.my_key.private_key_pem}' > ./deployer-key.pem"
+  }
+}
+
 resource "aws_instance" "myFirstInstance" {
   ami           = var.ami_id
-  key_name = var.key_name
+  aws_key_pair.deployer.key_name
   instance_type = var.instance_type
   vpc_security_group_ids = [aws_security_group.jenkins-sg-2022.id]
   tags= {
