@@ -8,7 +8,7 @@ resource "aws_instance" "mySonarInstance" {
       }
     }
 
- resource "aws_security_group" "sonar-sg-2022" {
+ resource "aws_security_group" "sonar-sg-2022-1" {
       name        = "security_sonar_group_2022"
       description = "security group for Sonar"
 
